@@ -1,0 +1,6 @@
+@LoginFlow_HostAddress = http://localhost:5296
+
+GET {{LoginFlow_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
