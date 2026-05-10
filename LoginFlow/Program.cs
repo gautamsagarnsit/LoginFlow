@@ -1,4 +1,7 @@
 
+using LoginFlow.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MyApi.Controllers;
 
 namespace LoginFlow
@@ -16,6 +19,15 @@ namespace LoginFlow
             builder.Services.AddOpenApi();
             builder.Services.AddSingleton<IDateTime, SystemDateTime>();
             builder.Services.AddScoped<ITimeService, TimeService>();
+            builder.Services.AddDbContext<ApplicationDbContext>(
+                                            options =>
+                                                options.UseNpgsql(
+                                                    builder.Configuration.GetConnectionString(
+                                                        "DefaultConnection")));
+
+            builder.Services
+                .AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             var app = builder.Build();
 
