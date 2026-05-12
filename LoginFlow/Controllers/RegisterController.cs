@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using LoginFlow.Common;
 using LoginFlow.Data;
 using LoginFlow.Data.Tables;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace LoginFlow.Controllers
 {
@@ -20,6 +22,16 @@ namespace LoginFlow.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromForm] RegisterDTO request)
         {
+            var CheckUsername = await _context.Users.Where(b =>b.Username == request.Username).ToListAsync();
+            var checkEmail = await _context.Users.Where(b => b.Email == request.Email).ToListAsync();
+            if (CheckUsername.Any())
+            {
+                return Ok($"{request.Username} already exist");
+            }
+            if(checkEmail.Any())
+            {
+                return Ok($"{request.Email} already Exist");
+            }
             var user = _mapper.Map<User>(request);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -30,8 +42,9 @@ namespace LoginFlow.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var allUsers = await _context.Users.ToListAsync();
-            return Ok(allUsers);
+            List<User> allUsers = await _context.Users.ToListAsync();
+            var response = _mapper.Map<List<UserResponseDTO>>(allUsers);
+            return Ok(response);
         }
     }
 
