@@ -1,25 +1,21 @@
 ﻿using AutoMapper;
-using LoginFlow.Common;
 using LoginFlow.Controllers;
 using LoginFlow.Data.Tables;
-using Microsoft.AspNetCore.Identity;
 
 namespace LoginFlow.Data.Mappers
 {
-    public class RegisterToUserMapper : Profile
+    public class LoginToUserMapper : Profile
     {
-        public RegisterToUserMapper()
-        {   
-            CreateMap<RegisterDTO, User>()
+        public LoginToUserMapper()
+        {
+            CreateMap<UserLoginDTO, User>()
                 .ForMember(dest => dest.PasswordHash,
-                       opt => opt.MapFrom(src => HashPassword(src.Password)));
-
-            CreateMap<User, UserResponseDTO>();
+                      opt => opt.MapFrom(src => HashPassword(src.Password)));
         }
+
         private string HashPassword(string password)
         {
             return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
         }
-
     }
 }
