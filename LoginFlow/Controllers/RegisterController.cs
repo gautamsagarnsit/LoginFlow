@@ -13,14 +13,10 @@ namespace LoginFlow.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private IMapper _mapper;
         private SignInManager<IdentityUser> _signInManager;
         private UserManager<IdentityUser> _userManager;
-        public RegisterController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,ApplicationDbContext context, IMapper mapper)
+        public RegisterController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
-            _context  = context;
-            _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -34,14 +30,6 @@ namespace LoginFlow.Controllers
                 return Ok("Registration Successful");
             }
             return BadRequest($"Registration Failed with errors: {result.Errors}");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            List<User> allUsers = await _context.Users.ToListAsync();
-            var response = _mapper.Map<List<UserResponseDTO>>(allUsers);
-            return Ok(response);
         }
     }
 
