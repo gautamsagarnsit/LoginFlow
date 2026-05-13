@@ -2,6 +2,7 @@
 using LoginFlow.Data;
 using LoginFlow.Data.Tables;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoginFlow.Controllers
@@ -10,23 +11,35 @@ namespace LoginFlow.Controllers
     [Route("api/[controller]")]
     public class LoginController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private IMapper _mapper;
-        public LoginController(ApplicationDbContext context, IMapper mapper)
+        private SignInManager<IdentityUser> _signInManager;
+        private UserManager<IdentityUser> _userManager;
+
+        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
-            _mapper = mapper;
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
         [HttpPost]
         public async Task<IActionResult> Login([FromForm] UserLoginDTO request)
         {
-            User loginRequest = _mapper.Map<User>(request);
-            User? user = _context.Users.Where(u => u.Username == loginRequest.Username && u.Email == loginRequest.Email && u.PasswordHash == loginRequest.PasswordHash ).FirstOrDefault();
-            if(user != null)
-            {
-                return Ok($"Login Successful: {request.Username}, {request.Email}");
-            }
-            return Ok($"Login Failed: {request.Username}, {request.Password}");
+            var user = await _userManager.FindByNameAsync(request.Username) ?? await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+                return Unauthorized("User not found");
+
+            var check = await _userManager.CheckPasswordAsync(user, request.Password);
+            if (!check)
+                return Unauthorized("Incorrect Password");
+            var result = await _signInManager.PasswordSignInAsync(user, request.Password, true, false);
+            if (result.Succeeded)
+                return Ok("Login Successful");
+
+            if (result.IsLockedOut)
+                return Unauthorized("User is locked out");
+
+            if (result.IsNotAllowed)
+                return Unauthorized("User not allowed to sign in (email not confirmed?)");
+
+            return Unauthorized("Invalid Credentials");
         }       
     }
 
