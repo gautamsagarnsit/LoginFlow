@@ -1,6 +1,11 @@
-﻿using LoginFlow.Data;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using LoginFlow.Common;
+using LoginFlow.Data;
+using LoginFlow.Data.Tables;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace LoginFlow.Controllers
 {
@@ -8,23 +13,30 @@ namespace LoginFlow.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        public RegisterController(ApplicationDbContext context)
+        private SignInManager<IdentityUser> _signInManager;
+        private UserManager<IdentityUser> _userManager;
+        public RegisterController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
-            _context  = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
         [HttpPost]
-        public IActionResult Register([FromForm] User request)
+        public async Task<IActionResult> Register([FromForm] RegisterDTO request)
         {
-            _context.Users.Add(request);
-            _context.SaveChanges();
-            return Ok(request);
+            var user = new IdentityUser { UserName = request.Username, Email = request.Email};
+            var result = await _signInManager.UserManager.CreateAsync(user, request.Password);
+            if(result.Succeeded)
+            {
+                return Ok("Registration Successful");
+            }
+            return BadRequest($"Registration Failed with errors: {result.Errors}");
         }
+    }
 
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok(_context.Users.ToList());
-        }
+    public class RegisterDTO
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
     }
 }
