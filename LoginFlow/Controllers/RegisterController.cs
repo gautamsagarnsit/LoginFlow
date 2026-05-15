@@ -39,11 +39,32 @@ namespace LoginFlow.Controllers
             }
             return BadRequest($"Registration Failed with errors: {result.Errors}");
         }
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if(userId == null || token == null)
+            {
+                return BadRequest("UserID or token is null");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if(result.Succeeded)
+            {
+                return Ok("Email Confirmed Succesfully, You can now proceed to login");
+            }
+            return BadRequest("Email Not verified");
+        }
 
         private async Task<IActionResult> SendConfirmationEmail(IdentityUser user)
         { 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = Url.Action("Confirm Email", "ConfirmEmail", new { userId = user.Id, token }, Request.Scheme);    
+            var confirmationLink = Url.Action("ConfirmEmail", "Register", new { userId = user.Id, token }, Request.Scheme);    
             await _emailSender.SendEmailAsync(user.Email, "Confirm your email", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
             return RedirectToAction("RegisterConfirmation");
         }
