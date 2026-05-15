@@ -56,6 +56,7 @@ namespace LoginFlow.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if(result.Succeeded)
             {
+                await _emailSender.SendEmailAsync(user.Email, "Welcome to Login Flow", $"Your EmailId is succesfully Confirmed, you can use LoginFlow");
                 return Ok("Email Confirmed Succesfully, You can now proceed to login");
             }
             return BadRequest("Email Not verified");
