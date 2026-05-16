@@ -18,7 +18,7 @@ namespace LoginFlow.Tests
             var signInManager = new Mock<SignInManager<IdentityUser>>(userManager.Object, null, null, null, null, null, null);
             var emailSender = new Mock<IEmailSender>();
 
-            var controller = new RegisterController(userManager.Object, signInManager.Object, emailSender.Object);
+            var controller = new RegisterController(userManager.Object,emailSender.Object);
 
             var dto = new RegisterDTO { Username = "testuser", Email = "test@example.com", Password = "P@ssw0rd!" };
 
@@ -39,7 +39,7 @@ namespace LoginFlow.Tests
             var signInManager = new Mock<SignInManager<IdentityUser>>(userManager.Object, null, null, null, null, null, null);
             var emailSender = new Mock<IEmailSender>();
 
-            var controller = new RegisterController(userManager.Object, signInManager.Object, emailSender.Object);
+            var controller = new RegisterController(userManager.Object, emailSender.Object);
 
             var dto = new RegisterDTO { Username = "testuser", Email = "existing@example.com", Password = "P@ssw0rd!" };
 
