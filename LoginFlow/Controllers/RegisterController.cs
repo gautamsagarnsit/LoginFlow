@@ -16,14 +16,12 @@ namespace LoginFlow.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private SignInManager<IdentityUser> _signInManager;
         private UserManager<IdentityUser> _userManager;
         private IEmailSender _emailSender;
 
-        public RegisterController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IEmailSender emailSender)
+        public RegisterController(UserManager<IdentityUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _emailSender = emailSender;
         }
 
@@ -31,7 +29,7 @@ namespace LoginFlow.Controllers
         public async Task<IActionResult> Register([FromForm] RegisterDTO request)
         {
             var user = new IdentityUser { UserName = request.Username, Email = request.Email};
-            var result = await _signInManager.UserManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user, request.Password);
             if(result.Succeeded)
             {
                 await SendConfirmationEmail(user);
