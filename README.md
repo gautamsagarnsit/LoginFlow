@@ -1,2 +1,2 @@
 # LoginFlow
-![CI](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/ci-cd.yml/badge.svg)
+![CI](https://github.com/gautamsagarnsit/LoginFlow/actions/workflows/dotnet.yml/badge.svg)
