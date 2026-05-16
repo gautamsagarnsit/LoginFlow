@@ -12,20 +12,20 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LoginFlow.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260511150624_Users")]
-    partial class Users
+    [Migration("20260516151719_InitialIdentity")]
+    partial class InitialIdentity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LoginFlow.User", b =>
+            modelBuilder.Entity("LoginFlow.Data.Tables.User", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -37,7 +37,7 @@ namespace LoginFlow.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
 
