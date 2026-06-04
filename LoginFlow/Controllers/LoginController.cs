@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using LoginFlow.Data;
+﻿using LoginFlow.Data;
 using LoginFlow.Data.Tables;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
