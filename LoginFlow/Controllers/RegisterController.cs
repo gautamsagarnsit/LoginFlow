@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using LoginFlow.Common;
+﻿using LoginFlow.Common;
 using LoginFlow.Data;
 using LoginFlow.Data.Tables;
 using LoginFlow.Services;
